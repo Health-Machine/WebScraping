@@ -56,11 +56,10 @@ FILTER = "&src=typed_query&f=live"
 URL = f"https://x.com/search?q="
 
 
+
 """
-WINDOWS
 options = Options()
 options.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
-
 service = Service(executable_path='./chromedriver.exe')
 driver = webdriver.Chrome(service=service, options=options)
 """
@@ -171,10 +170,16 @@ def main():
                     tweets_history.append(clean_review)
                     sentiment_scores = sentimentAnalysis.analyze_sentiment(clean_review)
 
+                    datetime = ""
+                    try:
+                        datetime = data.get_attribute("datetime")
+                    except Exception as e:
+                        print(f"Error getting datetime: {e}")
+
                     dataframe["url"].append(driver.current_url)
                     dataframe["model"].append(gm_model)
                     dataframe["review"].append(translate)
-                    dataframe["data"].append(data.get_attribute("datetime"))
+                    dataframe["data"].append(datetime)
                     dataframe["pos"].append(sentiment_scores["pos"])
                     dataframe["neg"].append(sentiment_scores["neg"])
                 
