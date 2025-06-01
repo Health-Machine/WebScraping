@@ -37,7 +37,7 @@ def remover_acentos(texto):
     texto_sem_acentos = ''.join(
         c for c in texto_normalizado if not unicodedata.combining(c)
     )
-    return texto_sem_acentos
+    return texto_sem_acentos.lower()
 
 
 tokens = ("POSITIVO", "NEGATIVO")
@@ -67,7 +67,7 @@ def t_error(t):
 
 def normalize_text(text):
     words = re.findall(r'\w+|\S', text)
-    return ' '.join(w.capitalize() if w.isalpha() else w for w in words)
+    return remover_acentos(' '.join(words)).strip().lower()
 
 def analyze_sentiment(text):
     lexer = lex.lex()

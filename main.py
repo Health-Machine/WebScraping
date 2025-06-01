@@ -55,11 +55,11 @@ QUERYS = ["pintura", "acabamento", 'montagem', 'mecanica']
 FILTER = "&src=typed_query&f=live"
 URL = f"https://x.com/search?q="
 
-
-
 """
+
 options = Options()
 options.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
+
 service = Service(executable_path='./chromedriver.exe')
 driver = webdriver.Chrome(service=service, options=options)
 """
@@ -100,6 +100,8 @@ def main():
         "pos": [],
         "neg": []
     }
+
+    
     
     login()
 
@@ -107,7 +109,11 @@ def main():
         for query in QUERYS:
             search_url = f"{URL}{gm_model.replace(' ', '%20')}%20{query}{FILTER}"
             print(f"Searching for: {search_url}")
-            driver.get(search_url)
+            try:
+                driver.get(search_url)
+            except Exception as e:
+                print(f"Error accessing search URL: {e}")
+                continue
             time.sleep(5)
 
             last_height = driver.execute_script("return document.body.scrollHeight")
@@ -182,10 +188,14 @@ def main():
                     dataframe["data"].append(datetime)
                     dataframe["pos"].append(sentiment_scores["pos"])
                     dataframe["neg"].append(sentiment_scores["neg"])
+
+                    df = pd.DataFrame(dataframe)
+
+                    df.to_csv("reviews.csv", index=False)
+
+                    del df
                 
 
-    df = pd.DataFrame(dataframe)
-    df.to_csv("reviews.csv", index=False)
     driver.quit()
     print("Data collection completed and saved to reviews.csv")
         
