@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
 from deep_translator import GoogleTranslator
 import time
 import os
@@ -13,8 +14,8 @@ import pandas as pd
 
 load_dotenv()
 
-username = os.getenv("USER")
-password = os.getenv("PASSWORD")
+username = os.getenv("X_USER")
+password = os.getenv("X_PASSWORD")
 
 gm_models = [
     # 2024
@@ -74,13 +75,13 @@ def login():
 
     username_input = driver.find_element(By.XPATH, "//input[@autocomplete='username']")
     username_input.send_keys(username)
-    username_input.send_keys("\n")
+    username_input.send_keys(Keys.ENTER)
 
     time.sleep(2)
 
     password_input = driver.find_element(By.XPATH, "//input[@autocomplete='current-password']")
     password_input.send_keys(password)
-    password_input.send_keys("\n")
+    password_input.send_keys(Keys.ENTER)
 
     time.sleep(2)
 
