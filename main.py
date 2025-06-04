@@ -57,7 +57,7 @@ QUERYS = ["pintura", "acabamento"]
 FILTER = "&src=typed_query&f=live"
 URL = f"https://x.com/search?q="
 
-"""
+
 options = Options()
 
 options.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
@@ -68,7 +68,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 service = Service(executable_path='./geckodriver')
 driver = webdriver.Firefox(service=service)
-
+"""
 
 def login():
     driver.get("https://x.com/login")
@@ -197,14 +197,13 @@ def main():
 
                     df = pd.DataFrame(dataframe)
 
-                    # Put in https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename} with file
+                    # Put in https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename} with file in body binary
                 
                     filename = f"tweets_{gm_model.replace(' ', '_')}_{query}.csv"
 
                     requests.put(
                         f"https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename}",
-                        data=df.to_csv(index=False),
-                        headers={"Content-Type": "text/csv"}
+                        data=df.to_csv(index=False).encode('utf-8')
                     )
 
 
