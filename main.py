@@ -57,7 +57,7 @@ QUERYS = ["pintura", "acabamento"]
 FILTER = "&src=typed_query&f=live"
 URL = f"https://x.com/search?q="
 
-
+"""
 options = Options()
 
 options.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
@@ -68,7 +68,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 service = Service(executable_path='./geckodriver')
 driver = webdriver.Firefox(service=service)
-"""
+
 
 def login():
     driver.get("https://x.com/login")
