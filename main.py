@@ -11,8 +11,7 @@ import os
 from dotenv import load_dotenv
 import sentimentAnalysis
 import pandas as pd
-import boto3
-import io
+import requests
 
 load_dotenv()
 
@@ -25,8 +24,8 @@ gm_models = [
     "Volkswagen Polo",
     "Chevrolet Onix",
     "Hyundai HB20",
-    "Fiat Argo",
-    "Volkswagen T-Cross",
+    "Fiat Argo"
+    """Volkswagen T-Cross",
     "Chevrolet Tracker",
     "Hyundai Creta",
     "Fiat Mobi",
@@ -52,9 +51,9 @@ gm_models = [
     "Chevrolet Tracker",
     "Volkswagen T-Cross",
     "Fiat Argo",
-    "Jeep Compass",
+    "Jeep Compass","""
 ]
-QUERYS = ["pintura", "acabamento", 'montagem', 'mecanica']
+QUERYS = ["pintura", "acabamento"]
 FILTER = "&src=typed_query&f=live"
 URL = f"https://x.com/search?q="
 
@@ -198,16 +197,16 @@ def main():
 
                     df = pd.DataFrame(dataframe)
 
-                    csv_buffer = io.StringIO()
-                    df.to_csv(csv_buffer, index=False)
-                    df.to_csv("reviews.csv", index=False)
-
-                    s3 = boto3.client('s3')
-                    bucket_name = 'raw-bucket-health-machine'
-                    arquivo_s3 = f'dados/web_scraping_X.csv'
-
-                    s3.put_object(Bucket=bucket_name, Key=arquivo_s3, Body=csv_buffer.getvalue())
+                    # Put in https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename} with file
                 
+                    filename = f"tweets_{gm_model.replace(' ', '_')}_{query}.csv"
+
+                    requests.put(
+                        f"https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename}",
+                        data=df.to_csv(index=False),
+                        headers={"Content-Type": "text/csv"}
+                    )
+
 
     driver.quit()
 
