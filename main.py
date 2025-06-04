@@ -11,6 +11,8 @@ import os
 from dotenv import load_dotenv
 import sentimentAnalysis
 import pandas as pd
+import boto3
+import io
 
 load_dotenv()
 
@@ -56,7 +58,7 @@ QUERYS = ["pintura", "acabamento", 'montagem', 'mecanica']
 FILTER = "&src=typed_query&f=live"
 URL = f"https://x.com/search?q="
 
-"""
+
 options = Options()
 
 options.binary_location = 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe'
@@ -67,7 +69,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 service = Service(executable_path='./geckodriver')
 driver = webdriver.Firefox(service=service)
-
+"""
 
 def login():
     driver.get("https://x.com/login")
@@ -160,7 +162,11 @@ def main():
 
 
                 for tweet, data in zip(tweets, tweets_datas):
-                    text = tweet.text.strip().replace("\n", " ").replace("\t", " ")
+                    try:
+                        text = tweet.text.strip().replace("\n", " ").replace("\t", " ")
+                    except Exception as e:
+                        print(f"Error getting tweet text: {e}")
+                        continue
                     translate = text
 
                     try:
@@ -183,18 +189,24 @@ def main():
                     except Exception as e:
                         print(f"Error getting datetime: {e}")
 
-                    dataframe["url"].append(driver.current_url)
-                    dataframe["model"].append(gm_model)
-                    dataframe["review"].append(translate)
-                    dataframe["data"].append(datetime)
-                    dataframe["pos"].append(sentiment_scores["pos"])
-                    dataframe["neg"].append(sentiment_scores["neg"])
+                    dataframe["url"].append(str(driver.current_url))
+                    dataframe["model"].append(str(gm_model))
+                    dataframe["review"].append(str(translate))
+                    dataframe["data"].append(str(datetime))
+                    dataframe["pos"].append(str(sentiment_scores["pos"]))
+                    dataframe["neg"].append(str(sentiment_scores["neg"]))
 
                     df = pd.DataFrame(dataframe)
 
+                    csv_buffer = io.StringIO()
+                    df.to_csv(csv_buffer, index=False)
                     df.to_csv("reviews.csv", index=False)
 
-                    del df
+                    s3 = boto3.client('s3')
+                    bucket_name = 'raw-bucket-health-machine'
+                    arquivo_s3 = f'dados/web_scraping_X.csv'
+
+                    s3.put_object(Bucket=bucket_name, Key=arquivo_s3, Body=csv_buffer.getvalue())
                 
 
     driver.quit()
