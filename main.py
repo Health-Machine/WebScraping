@@ -199,10 +199,10 @@ def main():
 
                     # Put in https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename} with file in body binary
                 
-                    filename = f"tweets_{gm_model.replace(' ', '_')}_{query}.csv"
+                    filename = f"tweets.csv"
 
                     requests.put(
-                        f"https://upb1od2ypa.execute-api.us-east-1.amazonaws.com/hml/ra-bucket-381492149341/{filename}",
+                        f"https://ac8wp9lhhg.execute-api.us-east-1.amazonaws.com/hml/raw-bucket-381492149341/{filename}",
                         data=df.to_csv(index=False).encode('utf-8')
                     )
 
